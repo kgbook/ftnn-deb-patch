@@ -1,5 +1,7 @@
 # FTNN `.deb` 去发行版限制补丁脚本
 
+[English README](./README.en.md)
+
 ## 背景
 
 `FTNN_desktop_16.9.15408_amd64.deb` 的安装前脚本 `preinst` 内置了 Ubuntu 版本判断。
@@ -163,7 +165,12 @@ check_os_version() {
 
 ## 已知样例包
 
-中 `16.10.15508` 的官方下载地址为：
+目前目录里有这两个实际样例：
+
+- `FTNN_desktop_16.9.15408_amd64.deb`
+- `FTNN_desktop_16.10.15508_amd64.deb`
+
+其中 `16.10.15508` 的官方下载地址为：
 
 ```text
 https://softwaredownload.futustatic.com/FTNN_desktop_16.10.15508_amd64.deb

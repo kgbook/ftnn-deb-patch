@@ -7,8 +7,8 @@ Usage:
   ./patch_ftnn_deb.sh <input.deb> [output.deb]
 
 Examples:
-  ./patch_ftnn_deb.sh FTNN_desktop_16.9.15408_amd64.deb
-  ./patch_ftnn_deb.sh FTNN_desktop_16.9.15408_amd64.deb FTNN_patched.deb
+  ./patch_ftnn_deb.sh FTNN_desktop.deb
+  ./patch_ftnn_deb.sh FTNN_desktop.deb FTNN_patched.deb
 EOF
 }
 

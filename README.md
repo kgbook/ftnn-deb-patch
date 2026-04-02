@@ -179,9 +179,11 @@ https://softwaredownload.futustatic.com/FTNN_desktop_16.10.15508_amd64.deb
 对应下载命令：
 
 ```bash
-curl -fL --progress-bar -o ~/Downloads/FTNN_desktop.deb \
+curl -fL --progress-bar -o ./FTNN_desktop.deb \
   https://softwaredownload.futustatic.com/FTNN_desktop_16.10.15508_amd64.deb
 ```
+
+如果你已经在目标目录中，也可以直接省略 `./`，让文件下载到当前路径。
 
 如果后续继续验证新版本，建议把下载地址和包版本按同样格式追加到这里。
 
@@ -190,6 +192,7 @@ curl -fL --progress-bar -o ~/Downloads/FTNN_desktop.deb \
 ### Bash
 
 ```bash
+cd /path/to/your/workdir
 chmod +x ./patch_ftnn_deb.sh
 ./patch_ftnn_deb.sh FTNN_desktop.deb
 ```
@@ -203,6 +206,7 @@ chmod +x ./patch_ftnn_deb.sh
 ### Python
 
 ```bash
+cd /path/to/your/workdir
 chmod +x ./patch_ftnn_deb.py
 ./patch_ftnn_deb.py FTNN_desktop.deb
 ```

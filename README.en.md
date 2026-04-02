@@ -163,7 +163,6 @@ That means:
 
 ## Known Sample Packages
 
-- `FTNN_desktop_16.9.15408_amd64.deb`
 - `FTNN_desktop_16.10.15508_amd64.deb`
 
 The official download URL for `16.10.15508` is:
@@ -175,15 +174,18 @@ https://softwaredownload.futustatic.com/FTNN_desktop_16.10.15508_amd64.deb
 Download command:
 
 ```bash
-curl -fL --progress-bar -o ~/Downloads/FTNN_desktop.deb \
+curl -fL --progress-bar -o ./FTNN_desktop.deb \
   https://softwaredownload.futustatic.com/FTNN_desktop_16.10.15508_amd64.deb
 ```
+
+If you are already in the target directory, you can also omit `./` and download directly into the current path.
 
 ## Usage
 
 ### Bash
 
 ```bash
+cd /path/to/your/workdir
 chmod +x ./patch_ftnn_deb.sh
 ./patch_ftnn_deb.sh FTNN_desktop.deb
 ```
@@ -197,6 +199,7 @@ Specify an explicit output file:
 ### Python
 
 ```bash
+cd /path/to/your/workdir
 chmod +x ./patch_ftnn_deb.py
 ./patch_ftnn_deb.py FTNN_desktop.deb
 ```

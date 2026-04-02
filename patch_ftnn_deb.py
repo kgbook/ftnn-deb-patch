@@ -80,7 +80,7 @@ def derive_output_path(input_deb: Path, output_deb: str | None) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Patch FTNN desktop .deb packages to skip the Ubuntu-only version restriction on non-Ubuntu systems."
+        description="Patch FTNN desktop .deb packages in the current directory or any specified path to skip the Ubuntu-only version restriction on non-Ubuntu systems."
     )
     parser.add_argument("input_deb", help="Path to the original .deb package")
     parser.add_argument("output_deb", nargs="?", help="Optional output path")

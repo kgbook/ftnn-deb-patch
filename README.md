@@ -81,25 +81,12 @@ BUG_REPORT_URL="https://bugs.debian.org/"
 
 ## 已知样例包
 
-目前目录里有这两个实际样例：
-
-- `FTNN_desktop_16.9.15408_amd64.deb`
-- `FTNN_desktop_16.10.15508_amd64.deb`
-
-其中 `16.10.15508` 的官方下载地址为：
-
-```text
-https://softwaredownload.futustatic.com/FTNN_desktop_16.10.15508_amd64.deb
-```
-
-对应下载命令：
+`FTNN_desktop_16.10.15508_amd64.deb` 的官方下载：
 
 ```bash
 curl -fL --progress-bar -o ./FTNN_desktop.deb \
   https://softwaredownload.futustatic.com/FTNN_desktop_16.10.15508_amd64.deb
 ```
-
-如果你已经在目标目录中，也可以直接省略 `./`，让文件下载到当前路径。
 
 如果后续继续验证新版本，建议把下载地址和包版本按同样格式追加到这里。
 

@@ -20,8 +20,24 @@ require_cmd() {
     fi
 }
 
+replace_once() {
+    local text="$1"
+    local old="$2"
+    local new="$3"
+
+    if [[ "$text" != *"$old"* ]]; then
+        echo "expected preinst snippet not found: $old" >&2
+        exit 1
+    fi
+
+    printf '%s' "${text/"$old"/"$new"}"
+}
+
 patch_preinst() {
     local preinst="$1"
+    local text
+    local old
+    local new
 
     if [[ ! -f "$preinst" ]]; then
         echo "preinst not found: $preinst" >&2
@@ -33,62 +49,34 @@ patch_preinst() {
         return 0
     fi
 
-    python3 - "$preinst" <<'PY'
-from pathlib import Path
-import sys
+    text="$(<"$preinst")"
 
-preinst = Path(sys.argv[1])
-text = preinst.read_text(encoding="utf-8")
+    old=$'. /etc/lsb-release\n        os_version=$DISTRIB_RELEASE'
+    new=$'. /etc/lsb-release\n        os_id=$(echo "${DISTRIB_ID:-unknown}" | tr \'[:upper:]\' \'[:lower:]\')\n        os_version=$DISTRIB_RELEASE'
+    text="$(replace_once "$text" "$old" "$new")"
 
-replacements = [
-    (
-        ". /etc/lsb-release\n        os_version=$DISTRIB_RELEASE",
-        ". /etc/lsb-release\n"
-        "        os_id=$(echo \"${DISTRIB_ID:-unknown}\" | tr '[:upper:]' '[:lower:]')\n"
-        "        os_version=$DISTRIB_RELEASE",
-    ),
-    (
-        ". /etc/os-release\n        os_version=$VERSION_ID",
-        ". /etc/os-release\n"
-        "        os_id=$(echo \"${ID:-unknown}\" | tr '[:upper:]' '[:lower:]')\n"
-        "        os_version=$VERSION_ID",
-    ),
-    (
-        "    else\n"
-        "        Log \"ERROR\" \"Unable to determine OS version.\"\n"
-        "        exit 1\n"
-        "    fi\n",
-        "    else\n"
-        "        Log \"ERROR\" \"Unable to determine OS version.\"\n"
-        "        exit 1\n"
-        "    fi\n\n"
-        "    os_id=${os_id:-unknown}\n"
-        "    os_version=${os_version:-0}\n",
-    ),
-    (
-        "if [ $os_version_num -lt 1804 ]; then",
-        'if [ "$os_id" = "ubuntu" ] && [ $os_version_num -lt 1804 ]; then',
-    ),
-    (
-        '    Log "INFO" "OS version check passed. Current version: $os_version"',
-        '    if [ "$os_id" = "ubuntu" ]; then\n'
-        '        Log "INFO" "OS version check passed. Current Ubuntu version: $os_version"\n'
-        "    else\n"
-        '        Log "INFO" "Non-Ubuntu system detected ($os_id $os_version). Skipping Ubuntu 18.04 minimum version check."\n'
-        "    fi",
-    ),
-]
+    old=$'. /etc/os-release\n        os_version=$VERSION_ID'
+    new=$'. /etc/os-release\n        os_id=$(echo "${ID:-unknown}" | tr \'[:upper:]\' \'[:lower:]\')\n        os_version=$VERSION_ID'
+    text="$(replace_once "$text" "$old" "$new")"
 
-for old, new in replacements:
-    if old not in text:
-        raise SystemExit(f"expected preinst snippet not found: {old!r}")
-    text = text.replace(old, new, 1)
+    old=$'    else\n        Log "ERROR" "Unable to determine OS version."\n        exit 1\n    fi\n'
+    new=$'    else\n        Log "ERROR" "Unable to determine OS version."\n        exit 1\n    fi\n\n    os_id=${os_id:-unknown}\n    os_version=${os_version:-0}\n'
+    text="$(replace_once "$text" "$old" "$new")"
 
-if "Non-Ubuntu system detected" not in text:
-    raise SystemExit("patch verification failed")
+    old='if [ $os_version_num -lt 1804 ]; then'
+    new='if [ "$os_id" = "ubuntu" ] && [ $os_version_num -lt 1804 ]; then'
+    text="$(replace_once "$text" "$old" "$new")"
 
-preinst.write_text(text, encoding="utf-8")
-PY
+    old='    Log "INFO" "OS version check passed. Current version: $os_version"'
+    new=$'    if [ "$os_id" = "ubuntu" ]; then\n        Log "INFO" "OS version check passed. Current Ubuntu version: $os_version"\n    else\n        Log "INFO" "Non-Ubuntu system detected ($os_id $os_version). Skipping Ubuntu 18.04 minimum version check."\n    fi'
+    text="$(replace_once "$text" "$old" "$new")"
+
+    if [[ "$text" != *'Non-Ubuntu system detected'* ]]; then
+        echo "patch verification failed" >&2
+        exit 1
+    fi
+
+    printf '%s' "$text" >"$preinst"
 
     if ! grep -q 'Non-Ubuntu system detected' "$preinst"; then
         echo "failed to patch preinst" >&2
@@ -103,7 +91,6 @@ main() {
     fi
 
     require_cmd dpkg-deb
-    require_cmd python3
 
     local input_deb="$1"
     local output_deb="${2:-}"

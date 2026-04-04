@@ -65,7 +65,6 @@ BUG_REPORT_URL="https://bugs.debian.org/"
 ### Bash 脚本
 
 - `bash`
-- `python3`
 - `dpkg-deb`
 - `realpath`
 

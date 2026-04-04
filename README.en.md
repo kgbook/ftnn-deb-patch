@@ -65,7 +65,6 @@ Both scripts do the following:
 ### Bash Script
 
 - `bash`
-- `python3`
 - `dpkg-deb`
 - `realpath`
 
